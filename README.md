@@ -1,8 +1,8 @@
 # git aa
 
-Stage modified files by a piece of their name — no paths.
+Stage modified files by typing part of their name.
 
-```
+```console
 $ git status --short
  M src/net/socket_server.cpp
  M tests/socket_server_test.cpp
@@ -17,22 +17,16 @@ $ git aa socket
 $ git aap socket_server.   # same, but interactive (git add -p)
 ```
 
-Rules:
-- Only *modified* tracked files are considered (not untracked, not staged-only).
-- Each pattern must match exactly one file; otherwise nothing is staged and the matches are listed.
-- Matching is a plain substring of the repo-relative path (no regex).
-- Works from any subdirectory.
+- Only modified files are matched (not new files).
+- Each word must match exactly one file. Otherwise nothing is staged.
+- Works from any folder in the repo.
 - `<TAB>` completes modified file names.
 
 ## Install
 
-```
+```bash
 git clone <this repo> ~/git-aa
 ~/git-aa/install.sh
 ```
 
-This links `git-aa` and `git-aap` into `~/.local/bin` (git runs any `git-<name>` on
-`PATH` as `git <name>`) and adds a `source` line for the completion to `~/.bashrc`.
-
-Requirements: bash, `~/.local/bin` on `PATH`, and git's bash completion enabled
-(default on Ubuntu/Debian) for `<TAB>` to work.
+Needs bash, with `~/.local/bin` on your `PATH`.
