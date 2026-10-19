@@ -1,0 +1,41 @@
+#!/bin/bash
+# git aa [-p] <pattern>...
+# Stage *modified* files by a fragment of their name, without typing the path.
+files=()
+add_args=()
+
+if [ "$1" = "-p" ]; then
+	add_args+=(-p)
+	shift
+fi
+
+if [ $# -eq 0 ]; then
+	echo "usage: git aa [-p] <pattern>..."
+	echo "Adds *modified* files without relative path."
+	echo "Does not add if there are multiple matching files."
+	echo "TAB autocomplete might work."
+	exit 1
+fi
+
+# Paths from ls-files are relative to the cwd; work from the root so they stay valid.
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+while [ $# -gt 0 ]; do
+	mapfile -t matching < <(git ls-files -m | grep -F -- "$1")
+	count=${#matching[@]}
+	if [ "$count" -eq 1 ]; then
+		files+=("${matching[0]}")
+		shift
+	elif [ "$count" -eq 0 ]; then
+		echo " 0 modified files matching: $1"
+		exit 1
+	else
+		echo "$count modified files matching: $1"
+		for index in "${!matching[@]}"; do
+			echo " $index: ${matching[$index]}"
+		done
+		exit 1
+	fi
+done
+
+git add "${add_args[@]}" -- "${files[@]}"
